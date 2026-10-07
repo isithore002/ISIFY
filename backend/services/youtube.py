@@ -52,7 +52,13 @@ def get_mp3_path(track_id: str) -> Path | None:
 
 
 def _base_opts() -> dict:
-    opts = {"quiet": True, "no_warnings": True, "noplaylist": True, "noprogress": True}
+    opts = {
+        "quiet": True, 
+        "no_warnings": True, 
+        "noplaylist": True, 
+        "noprogress": True,
+        "extractor_args": {"youtube": ["player_client=ios,android,web"]}
+    }
     if JS_RUNTIMES:
         opts["js_runtimes"] = JS_RUNTIMES
     return opts
