@@ -1,0 +1,23 @@
+# Secrets
+.env
+*.local
+backend/.cache
+
+# Python
+backend/venv/
+__pycache__/
+*.pyc
+
+# Downloaded audio
+backend/cache/
+
+# Node / Expo
+node_modules/
+dist/
+mobile/.expo/
+mobile/dist/
+
+# Logs / OS
+*.log
+.DS_Store
+Thumbs.db

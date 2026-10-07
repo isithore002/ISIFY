@@ -1,0 +1,6 @@
+/* Only the bare minimum lives here. Theme, colors and typography are owned by App.css —
+   setting font-family/background on #root here used to shadow App.css's body rule
+   (an ID selector always wins), so the app silently rendered in Arial. */
+html, body, #root {
+  height: 100%;
+}

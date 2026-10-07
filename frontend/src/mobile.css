@@ -1,0 +1,316 @@
+/* ══ Phone layout (≤ 760px) ═══════════════════════════════════════════════════
+   A phone gets its own layout, not a squeezed desktop: a bottom tab bar instead of the
+   sidebar, a floating mini-player that opens a full-screen "Now Playing", two-line song rows
+   with a single ⋯ button, and menus that slide up from the bottom edge.
+
+   Loaded after App.css, so at equal specificity these rules win. */
+
+/* Touch basics — everywhere */
+html { -webkit-tap-highlight-color: transparent; }
+button, a, input, select, [role="button"] { touch-action: manipulation; } /* no double-tap-zoom delay */
+
+/* The phone-only pieces don't exist above phone width */
+.m-tabbar, .m-sheet, .np-sheet, .top-nav-brand, .track-menu-backdrop { display: none; }
+
+@keyframes sheetUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+@media (max-width: 760px) {
+  :root { --player-h: 64px; --tabbar-h: 58px; }
+  body { overscroll-behavior-y: none; }
+
+  /* ── Shell: content · mini player · tab bar ── */
+  .app-shell {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(0, 1fr) auto auto;
+  }
+  .sidebar { display: none; }
+  .main-content { grid-column: 1; grid-row: 1; }
+  .player-bar-container { grid-column: 1; grid-row: 2; }
+
+  /* ── Top bar: logo · search · avatar ── */
+  .top-nav { height: 56px; padding: 0 12px; gap: 10px; }
+  .top-nav-brand { display: flex; align-items: center; flex-shrink: 0; }
+  .top-nav-tabs { display: none; }
+  .search-wrap { flex: 1; max-width: none; }
+  .search-input { font-size: 16px; } /* under 16px, iPhones zoom the page when the field is focused */
+  .top-nav-user-actions { gap: 8px; }
+
+  /* ── Bottom tab bar ── */
+  .m-tabbar {
+    display: grid;
+    grid-column: 1;
+    grid-row: 3;
+    grid-template-columns: repeat(4, 1fr);
+    background: var(--bg-sidebar);
+    border-top: 1px solid var(--border-subtle);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .m-tab {
+    height: var(--tabbar-h);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    color: var(--text-muted);
+    font-size: 10.5px;
+    font-weight: 600;
+    transition: color 0.15s, transform 0.1s;
+  }
+  .m-tab.active { color: var(--accent); }
+  .m-tab:active { transform: scale(0.92); }
+
+  /* ── Full-screen sheets (Library) ── */
+  .m-sheet {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    inset: 0;
+    z-index: 300;
+    background: var(--bg-main);
+    padding-top: env(safe-area-inset-top);
+    animation: sheetUp 0.26s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .m-sheet-header {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 8px;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .m-sheet-header h2 { font-size: 18px; font-weight: 800; }
+  .m-sheet-close { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; }
+  .m-sheet-body { flex: 1; overflow-y: auto; padding: 12px 16px calc(24px + env(safe-area-inset-bottom)); }
+
+  .m-library .library-title { display: none; }
+  .m-library .library-header { justify-content: flex-end; padding: 0 0 10px; }
+  .m-library .library-actions { gap: 10px; }
+  .m-library .library-stats { padding: 0 0 10px; }
+  .m-library .library-stat-card { padding: 12px 14px 11px; border-radius: 12px; }
+  .m-library .library-stat-value { font-size: 26px; }
+  .m-library .library-add-btn {
+    width: 46px; height: 46px; font-size: 24px;
+    border: 1px solid var(--border-subtle); border-radius: 50%; background: var(--bg-card);
+  }
+  .m-library .library-item { padding: 13px 10px; font-size: 15.5px; border-radius: 10px; gap: 12px; }
+  .m-library .library-item-bullet { font-size: 17px; width: 24px; }
+  .m-library .library-remove-btn { opacity: 1; width: 44px; height: 44px; font-size: 14px; }
+  .m-library .library-new input { font-size: 16px; padding: 13px 12px; }
+
+  /* ── Discover ── */
+  .hero-banner { margin: 4px 14px 20px; min-height: 170px; padding: 20px; }
+  .hero-artist-name { font-size: 26px; }
+  .hero-image-wrap { width: 42%; }
+  .hero-content { max-width: 62%; }
+  .trendy-section, .popular-section, .genre-section { padding: 0 14px; }
+  .genre-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .genre-card { min-height: 84px; padding: 12px 12px 10px; }
+  .genre-name { font-size: 14.5px; }
+  .genre-emoji { font-size: 38px; }
+  .genre-tab { padding: 6px 14px; }
+  .trendy-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .trendy-card { padding: 9px; }
+  .carousel-nav { display: none; }
+  .popular-header { display: none; }
+  .popular-row { grid-template-columns: 24px 44px 1fr auto; gap: 10px; padding: 8px 4px; }
+  .popular-plays, .popular-duration { display: none; }
+
+  /* ── Playlist page ── */
+  .tracklist { padding-bottom: 12px; }
+  .playlist-header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 14px;
+    padding: 8px 16px 12px;
+  }
+  .playlist-hero { width: min(56vw, 220px); height: min(56vw, 220px); border-radius: 12px; }
+  .playlist-header-info { align-items: center; width: 100%; }
+  .playlist-title { font-size: 24px; }
+  .playlist-controls { justify-content: center; width: 100%; gap: 8px; }
+  .play-all-btn { padding: 12px 26px; }
+  .download-all-btn { padding: 11px 15px; font-size: 12.5px; }
+  .playlist-rename input { min-width: 0; width: 100%; font-size: 16px; }
+
+  /* ── Search results header: back · title · one full-width Play button ── */
+  .search-results-view { padding-bottom: 12px; }
+  .search-results-header { flex-direction: column; align-items: flex-start; gap: 12px; padding: 14px 16px 16px; }
+  .search-title { font-size: 22px; line-height: 1.15; }
+  .search-play-all { align-self: stretch; width: 100%; white-space: nowrap; text-align: center; }
+
+  /* ── Song rows: number · cover · title/artist · ⋯ ── */
+  .tracklist-header { display: none; }
+  .track-row { grid-template-columns: 26px 46px 1fr auto; padding: 8px 10px; gap: 10px; min-height: 62px; }
+  .track-album, .track-duration { display: none; }
+  .track-actions { opacity: 1; }
+  .track-actions > :not(.more-btn) { display: none; } /* everything lives in the ⋯ sheet */
+  .more-btn { width: 44px; height: 44px; background: transparent; border: none; font-size: 22px; }
+  .more-btn:hover { background: transparent; color: var(--text-main); }   /* no stuck green circle after a tap */
+  .more-btn:active { background: rgba(255, 255, 255, 0.1); }
+  .playlist-notice { text-align: center; padding: 0 4px; max-width: 100%; }
+  .track-title { font-size: 14.5px; }
+  .track-artist { font-size: 12.5px; }
+  .track-cover-wrap, .track-cover { width: 46px; height: 46px; }
+  .track-row, .popular-row, .trendy-card { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+
+  /* ── Mini player: a floating card above the tab bar ── */
+  .player-bar-container {
+    flex-direction: column-reverse; /* progress line along the bottom edge */
+    margin: 0 8px 6px;
+    border: 1px solid var(--border-subtle);
+    border-radius: 14px;
+    background: var(--bg-card);
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  }
+  .player-bar-container.idle { display: none; }
+  .player-top-progress { height: 2px; pointer-events: none; }
+  .player-top-progress::before, .player-progress-glow-head { display: none; }
+  .player-main-bar { grid-template-columns: 1fr auto; height: 58px; padding: 6px 6px 6px 8px; gap: 8px; }
+  .player-left { cursor: pointer; gap: 10px; }
+  .player-art-wrap, .player-art { width: 44px; height: 44px; }
+  .player-title { font-size: 14px; }
+  .player-center { gap: 2px; }
+  .player-center > :nth-child(1), .player-center > :nth-child(2), .player-center > :nth-child(5) { display: none; }
+  .player-ctrl-btn { width: 44px; height: 44px; }
+  .player-play-btn { width: 44px; height: 44px; }
+  .player-right { display: none; }
+
+  /* ── Full-screen Now Playing ── */
+  .np-sheet {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    inset: 0;
+    z-index: 400;
+    overflow: hidden;
+    background: #0c0d14;
+    padding: env(safe-area-inset-top) 22px calc(18px + env(safe-area-inset-bottom));
+    animation: sheetUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .np-bg {
+    position: absolute;
+    inset: -40px;
+    background-size: cover;
+    background-position: center;
+    filter: blur(50px) saturate(1.35);
+    opacity: 0.6;
+  }
+  .np-sheet::before { /* darkens toward the controls so text stays readable over any artwork */
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(180deg, rgba(12, 13, 20, 0.2) 0%, rgba(12, 13, 20, 0.94) 78%);
+  }
+  .np-sheet > :not(.np-bg) { position: relative; z-index: 2; }
+  .np-header { display: flex; align-items: center; justify-content: space-between; padding: 6px 0; }
+  .np-icon-btn { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 50%; color: #fff; }
+  .np-context { display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 0; font-size: 10.5px; letter-spacing: 0.12em; color: var(--text-muted); }
+  .np-context strong { font-size: 13px; letter-spacing: 0; color: #fff; max-width: 52vw; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .np-art-wrap { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; padding: 10px 0; }
+  .np-art { width: min(100%, 46vh, 400px); aspect-ratio: 1; object-fit: cover; border-radius: 14px; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6); }
+  .np-art-fallback { display: flex; align-items: center; justify-content: center; font-size: 72px; background: var(--bg-card); }
+  .np-titles { display: flex; align-items: center; gap: 10px; padding-top: 6px; }
+  .np-title-block { flex: 1; min-width: 0; }
+  .np-title {
+    font-size: 22px; font-weight: 800; line-height: 1.2;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .np-artist { margin-top: 4px; font-size: 15px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .np-like { color: var(--text-muted); }
+  .np-like.liked { color: var(--accent); }
+  .np-like svg { width: 24px; height: 24px; }
+
+  .np-seek { padding-top: 10px; }
+  .np-seek input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    display: block;
+    width: 100%;
+    height: 32px;               /* a big touch target… */
+    padding: 14px 0;            /* …around a 4px line */
+    background: linear-gradient(to right, var(--accent) var(--np-pct, 0%), rgba(255, 255, 255, 0.22) var(--np-pct, 0%));
+    background-clip: content-box;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .np-seek input[type="range"]::-webkit-slider-runnable-track { height: 4px; background: transparent; }
+  .np-seek input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px; height: 16px; margin-top: -6px;
+    border-radius: 50%; background: #fff; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  }
+  .np-seek input[type="range"]::-moz-range-track { height: 4px; background: transparent; }
+  .np-seek input[type="range"]::-moz-range-thumb { width: 16px; height: 16px; border: none; border-radius: 50%; background: #fff; }
+  .np-times { display: flex; justify-content: space-between; margin-top: -2px; font-size: 12px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+
+  .np-controls { display: flex; align-items: center; justify-content: space-between; padding: 10px 0 4px; }
+  .np-ctrl { position: relative; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 50%; color: var(--text-muted); }
+  .np-ctrl-lg { color: #fff; }
+  .np-ctrl.active { color: var(--accent); }
+  .np-ctrl.active::after { content: ""; position: absolute; bottom: 5px; width: 4px; height: 4px; border-radius: 50%; background: var(--accent); }
+  .np-ctrl:active, .np-play:active { transform: scale(0.92); }
+  .np-play {
+    width: 68px; height: 68px; border-radius: 50%; background: var(--accent); color: #000;
+    display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 28px var(--accent-glow);
+  }
+  .play-spinner-lg { width: 26px; height: 26px; border-width: 3px; }
+
+  /* ── Song menu → bottom sheet ── */
+  .track-menu-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+    background: rgba(0, 0, 0, 0.6);
+    animation: fadeIn 0.18s ease-out;
+  }
+  .track-context-menu {
+    top: auto !important;   /* placement is inline-styled for desktop; a sheet ignores it */
+    left: 0 !important;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    max-height: 80vh;
+    overflow-y: auto;
+    border-radius: 20px 20px 0 0;
+    padding: 8px 8px calc(12px + env(safe-area-inset-bottom));
+    animation: sheetUp 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .track-menu-header { padding: 10px 14px 8px; }
+  .track-menu-title { font-size: 15.5px; }
+  .track-menu-artist { font-size: 12.5px; }
+  .track-menu-item { padding: 14px; font-size: 15px; gap: 14px; border-radius: 10px; }
+  .track-menu-item:hover:not(:disabled) { background: transparent; color: inherit; } /* no sticky "hover" after a tap */
+  .track-menu-item:active:not(:disabled) { background: rgba(255, 255, 255, 0.09); }
+  .track-menu-danger:hover:not(:disabled) { background: transparent; color: inherit; }
+  .track-menu-icon { font-size: 17px; width: 24px; }
+  .track-menu-playlists { max-height: 30vh; }
+  .track-menu-new input { font-size: 16px; padding: 12px; }
+
+  /* ── Queue: full screen ── */
+  .queue-drawer { width: 100vw; top: 0; bottom: 0; z-index: 320; padding-top: env(safe-area-inset-top); }
+
+  /* ── Add-music dialog → bottom sheet ── */
+  .modal-backdrop { align-items: flex-end; }
+  .modal-card {
+    width: 100%; max-width: 100%;
+    border-radius: 20px 20px 0 0;
+    padding: 20px 16px calc(20px + env(safe-area-inset-bottom));
+    animation: sheetUp 0.26s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .modal-input { font-size: 16px; }
+
+  /* ── Toast rides above the player and tab bar ── */
+  .wv-toast-container { bottom: calc(var(--player-h) + var(--tabbar-h) + 18px + env(safe-area-inset-bottom)); }
+}
+
+/* Touch screens have no hover: without this, tapping a card leaves it "hovered" (lifted) */
+@media (hover: none) {
+  .trendy-card:hover { transform: none; }
+  .trendy-card:hover .trendy-art { transform: none; }
+}

@@ -1,0 +1,19 @@
+{
+  "expo": {
+    "name": "WaveVault",
+    "slug": "wavevault",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "android": {
+      "package": "com.wavevault.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#121212"
+      }
+    },
+    "plugins": [
+      "expo-av",
+      "expo-asset"
+    ]
+  }
+}
