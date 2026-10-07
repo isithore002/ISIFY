@@ -98,15 +98,18 @@ export function usePlayer() {
 
       // How long this sound has genuinely been playing (excluding pauses)
       let playedMs = 0;
+      let uncommittedMs = 0;
       let resumedAt = null;
       const commitPlayedMs = () => {
         if (resumedAt !== null) {
-          playedMs += performance.now() - resumedAt;
+          const delta = performance.now() - resumedAt;
+          playedMs += delta;
+          uncommittedMs += delta;
           resumedAt = null;
         }
-        if (playedMs > 0) {
-          usePlayerStore.getState().addListenTimeMs(playedMs);
-          playedMs = 0;
+        if (uncommittedMs > 0) {
+          usePlayerStore.getState().addListenTimeMs(uncommittedMs);
+          uncommittedMs = 0;
         }
       };
       commitListenTimeRef.current = commitPlayedMs;
