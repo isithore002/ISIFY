@@ -2,6 +2,7 @@ fastapi==0.115.5
 uvicorn[standard]==0.32.1
 spotipy==2.24.0
 yt-dlp[default] @ git+https://github.com/yt-dlp/yt-dlp.git@master
+nodeenv
 mutagen==1.47.0
 python-dotenv==1.0.1
 pydantic==2.10.3
