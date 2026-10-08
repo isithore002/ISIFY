@@ -57,7 +57,7 @@ def _base_opts() -> dict:
         "no_warnings": True, 
         "noplaylist": True, 
         "noprogress": True,
-        "extractor_args": {"youtube": ["player_client=ios,android,web"]}
+        "extractor_args": {"youtube": ["player_client=android,default,-web"]}
     }
     if JS_RUNTIMES:
         opts["js_runtimes"] = JS_RUNTIMES
