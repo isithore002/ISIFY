@@ -59,6 +59,11 @@ def _base_opts() -> dict:
         "noprogress": True,
         "extractor_args": {"youtube": ["player_client=android,default,-web"]}
     }
+    if os.path.exists("www.youtube.com_cookies.txt"):
+        opts["cookiefile"] = "www.youtube.com_cookies.txt"
+    elif os.path.exists("cookies.txt"):
+        opts["cookiefile"] = "cookies.txt"
+    
     if JS_RUNTIMES:
         opts["js_runtimes"] = JS_RUNTIMES
     return opts
